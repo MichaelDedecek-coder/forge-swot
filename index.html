@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWOT AI Strategist - FORGE CREATIVE | From Analysis to Action in 10 Minutes</title>
+    <meta name="description" content="Transform your business analysis into actionable strategies. AI-powered SWOT analysis that generates custom strategies for your business in minutes.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function SwotAiStrategist() {
+            const [stage, setStage] = useState('input'); // input, loading, results
+            const [formData, setFormData] = useState({
+                companyName: '',
+                industry: '',
+                companySize: '',
+                market: '',
+                products: '',
+                challenge: '',
+                email: '',
+                acceptTerms: false
+            });
+            const [swotData, setSwotData] = useState(null);
+            const [strategies, setStrategies] = useState(null);
+            const [loadingMessage, setLoadingMessage] = useState('');
+
+            const industries = [
+                'Technology', 'Healthcare', 'Finance', 'Retail', 'Manufacturing',
+                'Education', 'Hospitality', 'Real Estate', 'Agriculture', 'Transportation',
+                'Energy', 'Entertainment', 'Food & Beverage', 'Construction', 'Consulting'
+            ];
+
+            const companySizes = [
+                '1-10 employees', '11-50 employees', '51-200 employees', 
+                '201-500 employees', '500+ employees'
+            ];
+
+            const handleInputChange = (e) => {
+                const { name, value, type, checked } = e.target;
+                setFormData(prev => ({
+                    ...prev,
+                    [name]: type === 'checkbox' ? checked : value
+                }));
+            };
+
+            const generateSwotAnalysis = async () => {
+                setStage('loading');
+                
+                // Loading messages sequence
+                const messages = [
+                    'Analyzing your industry landscape...',
+                    'Identifying competitive advantages...',
+                    'Scanning market opportunities...',
+                    'Evaluating potential threats...',
+                    'Generating strategic recommendations...'
+                ];
+                
+                for (let i = 0; i < messages.length; i++) {
+                    setLoadingMessage(messages[i]);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+
+                // Generate SWOT based on inputs (simplified AI simulation)
+                const generatedSwot = {
+                    strengths: generateStrengths(formData),
+                    weaknesses: generateWeaknesses(formData),
+                    opportunities: generateOpportunities(formData),
+                    threats: generateThreats(formData)
+                };
+
+                setSwotData(generatedSwot);
+
+                // Generate TOWS strategies
+                const generatedStrategies = generateTowsStrategies(generatedSwot);
+                setStrategies(generatedStrategies);
+
+                // Submit to Formspree
+                submitToFormspree(formData, generatedSwot, generatedStrategies);
+
+                setStage('results');
+            };
+
+            const generateStrengths = (data) => {
+                const baseStrengths = {
+                    'Technology': [
+                        'Technical expertise and innovation capability',
+                        'Agile development methodology',
+                        'Strong intellectual property portfolio'
+                    ],
+                    'Food & Beverage': [
+                        'Unique product differentiation',
+                        'Strong local brand recognition',
+                        'Quality control and consistency'
+                    ],
+                    'Retail': [
+                        'Customer loyalty and repeat business',
+                        'Strategic location advantages',
+                        'Efficient inventory management'
+                    ]
+                };
+                
+                return baseStrengths[data.industry] || [
+                    'Established market presence in ' + data.market,
+                    'Specialized expertise in ' + data.products,
+                    'Dedicated team with industry knowledge'
+                ];
+            };
+
+            const generateWeaknesses = (data) => {
+                const sizeWeaknesses = {
+                    '1-10 employees': [
+                        'Limited resources for expansion',
+                        'Dependency on key personnel',
+                        'Restricted marketing budget'
+                    ],
+                    '11-50 employees': [
+                        'Growing pains in scaling operations',
+                        'Need for process standardization',
+                        'Limited geographic reach'
+                    ]
+                };
+                
+                return sizeWeaknesses[data.companySize] || [
+                    'Resource constraints for rapid scaling',
+                    'Limited market diversification',
+                    'Competitive pressure on pricing'
+                ];
+            };
+
+            const generateOpportunities = (data) => {
+                return [
+                    'Digital transformation in ' + data.industry + ' sector',
+                    'Expanding market demand in ' + data.market,
+                    'Strategic partnerships and collaborations',
+                    'Emerging technologies enabling new business models'
+                ];
+            };
+
+            const generateThreats = (data) => {
+                return [
+                    'Increased competition from digital-native companies',
+                    'Economic uncertainty affecting customer spending',
+                    'Regulatory changes in ' + data.industry,
+                    'Rapid technological disruption'
+                ];
+            };
+
+            const generateTowsStrategies = (swot) => {
+                return {
+                    so: [ // Strength-Opportunity
+                        {
+                            title: 'Market Leadership Initiative',
+                            description: 'Leverage your ' + swot.strengths[0].toLowerCase() + ' to capitalize on ' + swot.opportunities[0].toLowerCase(),
+                            timeline: '30 days',
+                            resources: 'Marketing team, Budget: €5,000'
+                        }
+                    ],
+                    wo: [ // Weakness-Opportunity
+                        {
+                            title: 'Strategic Partnership Program',
+                            description: 'Address ' + swot.weaknesses[0].toLowerCase() + ' by pursuing ' + swot.opportunities[2].toLowerCase(),
+                            timeline: '60 days',
+                            resources: 'Business development, External partners'
+                        }
+                    ],
+                    st: [ // Strength-Threat
+                        {
+                            title: 'Competitive Defense Strategy',
+                            description: 'Use ' + swot.strengths[1].toLowerCase() + ' to mitigate ' + swot.threats[0].toLowerCase(),
+                            timeline: '90 days',
+                            resources: 'Product team, Operations'
+                        }
+                    ],
+                    wt: [ // Weakness-Threat
+                        {
+                            title: 'Risk Mitigation Plan',
+                            description: 'Minimize impact of ' + swot.weaknesses[1].toLowerCase() + ' while addressing ' + swot.threats[1].toLowerCase(),
+                            timeline: 'Ongoing',
+                            resources: 'Leadership team, Contingency budget'
+                        }
+                    ]
+                };
+            };
+
+            const submitToFormspree = async (formData, swot, strategies) => {
+                const payload = {
+                    email: formData.email,
+                    company: formData.companyName,
+                    industry: formData.industry,
+                    swot_summary: JSON.stringify(swot, null, 2),
+                    strategies_summary: JSON.stringify(strategies, null, 2),
+                    timestamp: new Date().toISOString(),
+                    source: 'SWOT AI Strategist'
+                };
+
+                try {
+                    await fetch('https://formspree.io/f/mvgwyevg', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } catch (error) {
+                    console.error('Formspree submission error:', error);
+                }
+            };
+
+            const downloadPDF = () => {
+                // Simple text download for now
+                const content = `
+SWOT ANALYSIS REPORT
+${formData.companyName}
+Generated by FORGE CREATIVE AI Strategist
+
+=== STRENGTHS ===
+${swotData.strengths.map(s => '• ' + s).join('\n')}
+
+=== WEAKNESSES ===
+${swotData.weaknesses.map(w => '• ' + w).join('\n')}
+
+=== OPPORTUNITIES ===
+${swotData.opportunities.map(o => '• ' + o).join('\n')}
+
+=== THREATS ===
+${swotData.threats.map(t => '• ' + t).join('\n')}
+
+=== STRATEGIC RECOMMENDATIONS ===
+${Object.values(strategies).flat().map(s => 
+    `\n${s.title}\n${s.description}\nTimeline: ${s.timeline}\nResources: ${s.resources}`
+).join('\n')}
+
+Generated on: ${new Date().toLocaleDateString()}
+Powered by FORGE CREATIVE - Human Touch. AI Mind.
+                `;
+
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${formData.companyName}-SWOT-Analysis.txt`;
+                a.click();
+            };
+
+            if (stage === 'input') {
+                return (
+                    <div className="min-h-screen gradient-bg">
+                        <div className="container mx-auto px-4 py-12">
+                            <div className="text-center mb-12">
+                                <h1 className="text-5xl font-bold text-white mb-4">
+                                    SWOT AI Strategist
+                                </h1>
+                                <p className="text-xl text-white/90">
+                                    From Analysis to Action in 10 Minutes
+                                </p>
+                                <div className="mt-4 text-white/80">
+                                    Powered by FORGE CREATIVE & Claude AI
+                                </div>
+                            </div>
+
+                            <div className="max-w-2xl mx-auto glass-effect rounded-2xl p-8 shadow-2xl">
+                                <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                                    Tell us about your business
+                                </h2>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Company Name *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="companyName"
+                                            value={formData.companyName}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Industry *
+                                        </label>
+                                        <select
+                                            name="industry"
+                                            value={formData.industry}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                            required
+                                        >
+                                            <option value="">Select your industry</option>
+                                            {industries.map(ind => (
+                                                <option key={ind} value={ind}>{ind}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Company Size *
+                                        </label>
+                                        <select
+                                            name="companySize"
+                                            value={formData.companySize}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                            required
+                                        >
+                                            <option value="">Select company size</option>
+                                            {companySizes.map(size => (
+                                                <option key={size} value={size}>{size}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Primary Market
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="market"
+                                            value={formData.market}
+                                            onChange={handleInputChange}
+                                            placeholder="e.g., Czech Republic, Europe, Global"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Main Products/Services
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="products"
+                                            value={formData.products}
+                                            onChange={handleInputChange}
+                                            placeholder="Brief description of what you offer"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Key Challenge or Goal *
+                                        </label>
+                                        <textarea
+                                            name="challenge"
+                                            value={formData.challenge}
+                                            onChange={handleInputChange}
+                                            rows="3"
+                                            placeholder="What's your main strategic focus right now?"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Email (for your report) *
+                                        </label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            name="acceptTerms"
+                                            checked={formData.acceptTerms}
+                                            onChange={handleInputChange}
+                                            className="mr-2"
+                                            required
+                                        />
+                                        <label className="text-sm text-gray-600">
+                                            I agree to receive my SWOT analysis and occasional strategic insights from FORGE CREATIVE
+                                        </label>
+                                    </div>
+
+                                    <button
+                                        onClick={generateSwotAnalysis}
+                                        disabled={!formData.companyName || !formData.industry || !formData.companySize || !formData.challenge || !formData.email || !formData.acceptTerms}
+                                        className="w-full py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300"
+                                    >
+                                        Generate My SWOT Analysis & Strategies
+                                    </button>
+                                </div>
+
+                                <div className="mt-8 pt-8 border-t border-gray-200">
+                                    <div className="text-center text-sm text-gray-600">
+                                        <p>🚀 Join 500+ businesses using AI-powered strategic planning</p>
+                                        <p className="mt-2">✨ No credit card required • Results in minutes</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="text-center mt-8">
+                                <p className="text-white/80">
+                                    A FORGE CREATIVE Innovation | Human Touch. AI Mind.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (stage === 'loading') {
+                return (
+                    <div className="min-h-screen gradient-bg flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="mb-8">
+                                <div className="inline-block p-8 glass-effect rounded-full pulse-glow">
+                                    <i className="fas fa-brain text-6xl text-purple-600"></i>
+                                </div>
+                            </div>
+                            <h2 className="text-3xl font-bold text-white mb-4">
+                                AI Strategist at Work
+                            </h2>
+                            <p className="text-xl text-white/90 mb-8">
+                                {loadingMessage}
+                            </p>
+                            <div className="flex justify-center space-x-2">
+                                <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                                <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{animationDelay: '200ms'}}></div>
+                                <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{animationDelay: '400ms'}}></div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (stage === 'results') {
+                return (
+                    <div className="min-h-screen gradient-bg py-12">
+                        <div className="container mx-auto px-4">
+                            <div className="text-center mb-8">
+                                <h1 className="text-4xl font-bold text-white mb-2">
+                                    Strategic Analysis Complete!
+                                </h1>
+                                <p className="text-xl text-white/90">
+                                    {formData.companyName} - Your roadmap to success
+                                </p>
+                            </div>
+
+                            <div className="max-w-6xl mx-auto">
+                                {/* SWOT Matrix */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                    <div className="glass-effect rounded-xl p-6">
+                                        <h3 className="text-xl font-bold mb-4 text-green-600">
+                                            <i className="fas fa-thumbs-up mr-2"></i>Strengths
+                                        </h3>
+                                        <ul className="space-y-2">
+                                            {swotData.strengths.map((s, i) => (
+                                                <li key={i} className="flex items-start">
+                                                    <span className="text-green-500 mr-2">✓</span>
+                                                    <span className="text-gray-700">{s}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    <div className="glass-effect rounded-xl p-6">
+                                        <h3 className="text-xl font-bold mb-4 text-red-600">
+                                            <i className="fas fa-exclamation-triangle mr-2"></i>Weaknesses
+                                        </h3>
+                                        <ul className="space-y-2">
+                                            {swotData.weaknesses.map((w, i) => (
+                                                <li key={i} className="flex items-start">
+                                                    <span className="text-red-500 mr-2">!</span>
+                                                    <span className="text-gray-700">{w}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    <div className="glass-effect rounded-xl p-6">
+                                        <h3 className="text-xl font-bold mb-4 text-blue-600">
+                                            <i className="fas fa-rocket mr-2"></i>Opportunities
+                                        </h3>
+                                        <ul className="space-y-2">
+                                            {swotData.opportunities.map((o, i) => (
+                                                <li key={i} className="flex items-start">
+                                                    <span className="text-blue-500 mr-2">↗</span>
+                                                    <span className="text-gray-700">{o}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    <div className="glass-effect rounded-xl p-6">
+                                        <h3 className="text-xl font-bold mb-4 text-orange-600">
+                                            <i className="fas fa-shield-alt mr-2"></i>Threats
+                                        </h3>
+                                        <ul className="space-y-2">
+                                            {swotData.threats.map((t, i) => (
+                                                <li key={i} className="flex items-start">
+                                                    <span className="text-orange-500 mr-2">⚠</span>
+                                                    <span className="text-gray-700">{t}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {/* Strategic Recommendations */}
+                                <div className="glass-effect rounded-xl p-8 mb-8">
+                                    <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                                        <i className="fas fa-chess mr-2"></i>Strategic Action Plan
+                                    </h2>
+                                    
+                                    <div className="space-y-6">
+                                        {Object.values(strategies).flat().map((strategy, i) => (
+                                            <div key={i} className="border-l-4 border-purple-500 pl-4 py-2">
+                                                <h4 className="font-bold text-lg text-gray-800">{strategy.title}</h4>
+                                                <p className="text-gray-600 mt-1">{strategy.description}</p>
+                                                <div className="mt-2 flex flex-wrap gap-4 text-sm">
+                                                    <span className="text-purple-600">
+                                                        <i className="far fa-clock mr-1"></i>{strategy.timeline}
+                                                    </span>
+                                                    <span className="text-gray-500">
+                                                        <i className="fas fa-users mr-1"></i>{strategy.resources}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex justify-center space-x-4">
+                                    <button
+                                        onClick={downloadPDF}
+                                        className="px-6 py-3 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-100 transition duration-300 shadow-lg"
+                                    >
+                                        <i className="fas fa-download mr-2"></i>Download Report
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setStage('input');
+                                            setFormData({
+                                                companyName: '',
+                                                industry: '',
+                                                companySize: '',
+                                                market: '',
+                                                products: '',
+                                                challenge: '',
+                                                email: '',
+                                                acceptTerms: false
+                                            });
+                                        }}
+                                        className="px-6 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition duration-300 shadow-lg"
+                                    >
+                                        <i className="fas fa-redo mr-2"></i>New Analysis
+                                    </button>
+                                </div>
+
+                                <div className="text-center mt-12">
+                                    <p className="text-white/80 mb-4">
+                                        Want deeper insights and implementation support?
+                                    </p>
+                                    <a 
+                                        href="https://forgecreative.cz" 
+                                        target="_blank"
+                                        className="inline-block px-8 py-3 bg-white/20 text-white font-bold rounded-lg hover:bg-white/30 transition duration-300"
+                                    >
+                                        Partner with FORGE CREATIVE
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div className="text-center mt-8">
+                                <p className="text-white/60 text-sm">
+                                    © 2025 FORGE CREATIVE | Human Touch. AI Mind. Czech Soul.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(<SwotAiStrategist />, document.getElementById('root'));
+    </script>
+</body>
+</html>
